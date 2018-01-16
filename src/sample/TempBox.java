@@ -1,13 +1,15 @@
 package sample;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
 import java.io.File;
 import java.time.Instant;
 import java.util.concurrent.Executor;
@@ -16,23 +18,41 @@ public class TempBox extends VBox {
 
     private String styleCSS;
 
+    private int counter = 1;
+    private static SimpleIntegerProperty counterProperty;
 
     public TempBox(String tempDir, String url, Pane pane, Executor executor) {
-        this.styleCSS = "-fx-background-color: " + GeneracolorRGB.generateColor() + ";";
+        this.styleCSS = "-fx-background-color: " + GenerateRandomColorRGB.generateColor() + ";";
+        counterProperty = new SimpleIntegerProperty(counter);
+        Label counterLabel = new Label();
 
+        counterLabel.textProperty().bind(counterProperty.asString());
+        counterLabel.setStyle(
+                "-fx-background-color: rgba(256,256,256,0.60); \n"+
+                        "-fx-font-size: 12pt; \n" +
+                        "-fx-border-color: rgb(49, 89, 23); \n" +
+                        "-fx-font-family: \"Impact\";"
+        );
 
         long unixTimestamp = Instant.now().getEpochSecond();
         File f = new File(tempDir + "//jHateDropper-" + unixTimestamp);
-        //System.out.println(f.getName());
-        //System.out.println(f.getPath());
         f.mkdir();
-        try {
+
+        final FirstLineService service = new FirstLineService();
+
+        service.setUrl(url);
+        service.setDir(f.getPath());
+        service.setExecutor(executor);
+        service.start();
+
+        /*try {
             HttpDownloadUtility.downloadFile(url, f.getPath());
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
 
         //Image image3 = new Image(url, 100, 0, false, false);
+
         Image image3 = new Image(url);
         ImageView imageView2 = new ImageView(image3);
 
@@ -43,22 +63,15 @@ public class TempBox extends VBox {
         imageView2.setSmooth(true);
         imageView2.setCache(true);
 
-        this.getChildren().add(imageView2);
-        /*HBox testHBox = new HBox();
-        testHBox.setMinSize(50,50);
-        testHBox.setStyle("-fx-background-color: "+ GeneracolorRGB.generateColor()+ ";");
-        testHBox.getChildren().add(new Label("dir"));
+        StackPane layersPane = new StackPane();
+        layersPane.getChildren().add(imageView2);
+        layersPane.getChildren().add(counterLabel);
 
-        HBox testHBox2 = new HBox();
-        testHBox2.setMinSize(50,50);
-        testHBox2.setStyle("-fx-background-color: "+ GeneracolorRGB.generateColor()+ ";");
-        testHBox2.getChildren().add(new Label("post now"));
+        this.getChildren().add(layersPane);
 
-        this.getChildren().addAll(testHBox,testHBox2);*/
-
-        //this.setStyle("-fx-background-color: "+ GeneracolorRGB.generateColor()+ "; \n -fx-border-color: gray; \n -fx-border-insets: 5; \n -fx-border-width: 3;\n -fx-border-style: dashed;");
         this.setStyle(styleCSS);
         this.setMinSize(150,150);
+        this.setMaxSize(150,150);
 
         this.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
@@ -93,13 +106,12 @@ public class TempBox extends VBox {
             }
         });
 
-
         this.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
-
+                counterProperty.set(++counter);
 
                 VBox tar = (VBox)event.getGestureTarget();
                 tar.setStyle("-fx-background-color: #555555;");
@@ -108,20 +120,17 @@ public class TempBox extends VBox {
                     success = true;
                     System.out.println(db.getHtml());
 
-                    final Main.FirstLineService service = new Main.FirstLineService();
+                    final FirstLineService service = new FirstLineService();
 
                     service.setUrl(db.getString());
-                    //service.setDir(f.getPath().replaceAll("\\\\","//"));
                     service.setDir(f.getPath());
                     service.setExecutor(executor);
-
                     service.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                         @Override
                         public void handle(WorkerStateEvent t) {
                             tar.setStyle(styleCSS);
                         }
                     });
-
                     service.start();
 
                 }

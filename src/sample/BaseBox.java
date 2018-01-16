@@ -2,22 +2,14 @@ package sample;
 
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FileUtils;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.concurrent.Executor;
-
-import static javafx.scene.control.ContentDisplay.TOP;
 
 
 public class BaseBox extends VBox {
@@ -29,24 +21,23 @@ public class BaseBox extends VBox {
         this.dir = dir;
         this.labelElement = new Label(label);
         this.labelElement.setStyle(
-
-//        "-fx-background-color: #FFFFFF; \n"+
                 "-fx-background-color: rgba(256,256,256,0.40); \n"+
-                //"-fx-effect: dropshadow(gaussian, red, 50, 0, 0, 0); \n" +
                 "-fx-font-size: 12pt; \n" +
                 "-fx-border-color: rgb(49, 89, 23); \n" +
                 "-fx-font-family: \"Impact\";"
-
-
-        //this.setStyle("-fx-background-color: "+ GeneracolorRGB.generateColor()+ "; \n -fx-border-color: gray; \n -fx-border-insets: 5; \n -fx-border-width: 3;\n -fx-border-style: dashed;");
-
         );
         this.getChildren().add(labelElement);
-        this.styleCSS = "-fx-background-color: " + GeneracolorRGB.generateColor() + ";";
-
-        //this.setStyle("-fx-background-color: "+ GeneracolorRGB.generateColor()+ "; \n -fx-border-color: gray; \n -fx-border-insets: 5; \n -fx-border-width: 3;\n -fx-border-style: dashed;");
+        this.styleCSS = "-fx-background-color: " + GenerateRandomColorRGB.generateColor() + ";";
         this.setStyle(styleCSS);
         this.setMinSize(150,150);
+
+        File file = new File(dir);
+
+        if (!file.exists()) {
+            //System.out.print("No Folder");
+            file.mkdir();
+            //System.out.print("Folder created");
+        }
 
         /*InputStream inputStream = null;
         try {
@@ -54,9 +45,6 @@ public class BaseBox extends VBox {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
-
 
         Image image3 = new Image(inputStream);
         ImageView imageView2 = new ImageView(image3);
@@ -102,7 +90,7 @@ public class BaseBox extends VBox {
                     success = true;
                     System.out.println(db.getHtml());
 
-                    final Main.FirstLineService service = new Main.FirstLineService();
+                    final FirstLineService service = new FirstLineService();
 
                     service.setUrl(db.getString());
                     service.setDir(dir);

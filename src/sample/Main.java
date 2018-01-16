@@ -15,17 +15,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
-
 
     private ExecutorService sequentialFirstLineExecutor;
     private final static File configJson = new File("default.json");
     private static ArrayList<BaseBox> myBoxArrayList;
-    private final static String tempDir = "D://2cs//testTemp";
+    private String tempDir;
 
     @Override
     public void init() throws Exception {
@@ -34,11 +31,10 @@ public class Main extends Application {
                 new FirstLineThreadFactory("box processing")
         );
 
-
         LoadConf config = new LoadConf(configJson, sequentialFirstLineExecutor);
 
         myBoxArrayList = config.getBaseBoxList();
-
+        tempDir = config.getTempDir();
     }
 
     @Override
@@ -47,27 +43,18 @@ public class Main extends Application {
         ArrayList<VBox> boxList = new ArrayList<VBox>();
         boxList.addAll(myBoxArrayList);
 
-
         FlowPane rootPane = new FlowPane();
-        rootPane.setStyle("-fx-background-color: "+ GeneracolorRGB.generateColor()+ ";");
+        rootPane.setStyle("-fx-background-color: "+ GenerateRandomColorRGB.generateColor()+ ";");
 
         VBox createTempDir = new VBox();
-        createTempDir.setStyle("-fx-background-color: "+ GeneracolorRGB.generateColor()+ ";");
+        createTempDir.setStyle("-fx-background-color: "+ GenerateRandomColorRGB.generateColor()+ ";");
         createTempDir.setMinSize(150,150);
-        Label tempDirComment = new Label("Подготовка папки \n для загрузки");
+        Label tempDirComment = new Label("Prepare directory \n for upload");
         tempDirComment.setStyle(
-
-
-//        "-fx-background-color: #FFFFFF; \n"+
                 "-fx-background-color: rgba(256,256,256,0.40); \n"+
-                //"-fx-effect: dropshadow(gaussian, red, 50, 0, 0, 0); \n" +
                 "-fx-font-size: 12pt; \n" +
                 "-fx-border-color: rgb(49, 89, 23); \n" +
                 "-fx-font-family: \"Impact\";"
-
-
-        //this.setStyle("-fx-background-color: "+ GeneracolorRGB.generateColor()+ "; \n -fx-border-color: gray; \n -fx-border-insets: 5; \n -fx-border-width: 3;\n -fx-border-style: dashed;");
-
         );
 
         createTempDir.getChildren().addAll(tempDirComment);
@@ -110,59 +97,14 @@ public class Main extends Application {
         Scene scene = new Scene(rootPane, 1500, 500);
         primaryStage.setTitle("jHate SMM Drag And Drop Poster");
 
-
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     @Override
     public void stop() throws Exception {
-
         sequentialFirstLineExecutor.shutdown();
         sequentialFirstLineExecutor.awaitTermination(3, TimeUnit.SECONDS);
-    }
-
-    static class FirstLineThreadFactory implements ThreadFactory {
-        static final AtomicInteger poolNumber = new AtomicInteger(1);
-        private final String type;
-
-        public FirstLineThreadFactory(String type) {
-            this.type = type;
-        }
-
-        @Override
-        public Thread newThread(Runnable runnable) {
-            Thread thread = new Thread(runnable, "LineService-" + poolNumber.getAndIncrement() + "-thread-" + type);
-            thread.setDaemon(true);
-
-            return thread;
-        }
-    }
-
-    public static class FirstLineService extends Service<String> {
-
-        private String url;
-        private String dir;
-
-        public final void setUrl(String value){
-            this.url = value;
-        }
-        public final void setDir(String value){
-            this.dir = value;
-        }
-
-        protected Task createTask() {
-
-            return new Task<String>() {
-                protected String call() throws Exception {
-                    HttpDownloadUtility.downloadFile(url, dir);
-
-                    System.out.println(url);
-
-                    return null;
-                }
-            };
-        }
     }
 
     public static void main(String[] args) {
