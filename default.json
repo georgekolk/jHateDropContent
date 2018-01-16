@@ -1,0 +1,16 @@
+{
+
+"destination":[
+
+  {"dir":"D://2cs//testTemp//testDir0", "tags":"", "label":"testDir0", "pic":"", "xc":"", "mode":"single"},
+  {"dir":"D://2cs//testTemp//testDir1", "tags":"", "label":"testDir1", "pic":"", "xc":"", "mode":"directory"},
+  {"dir":"D://2cs//testTemp//testDir2", "tags":"", "label":"testDir2", "pic":"", "xc":"", "mode":"directory"},
+  {"dir":"D://2cs//testTemp//testDir3", "tags":"", "label":"testDir3", "pic":"", "xc":"", "mode":"directory"},
+  {"dir":"D://2cs//testTemp//testDir4", "tags":"", "label":"testDir4", "pic":"", "xc":"", "mode":"directory"},
+  {"dir":"D://2cs//testTemp//testDir5", "tags":"", "label":"testDir5", "pic":"", "xc":"", "mode":"directory"}
+
+],
+
+  "tempDir":"D://2cs//testTemp"
+
+}
