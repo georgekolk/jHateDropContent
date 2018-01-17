@@ -44,7 +44,8 @@ public class Main extends Application {
         boxList.addAll(myBoxArrayList);
 
         FlowPane rootPane = new FlowPane();
-        rootPane.setStyle("-fx-background-color: "+ GenerateRandomColorRGB.generateColor()+ ";");
+        //rootPane.setStyle("-fx-background-color: "+ GenerateRandomColorRGB.generateColor()+ ";");
+        rootPane.setStyle("-fx-background-color: gray;");
 
         VBox createTempDir = new VBox();
         createTempDir.setStyle("-fx-background-color: "+ GenerateRandomColorRGB.generateColor()+ ";");

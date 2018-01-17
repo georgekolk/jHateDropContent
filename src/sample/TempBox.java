@@ -19,14 +19,14 @@ public class TempBox extends VBox {
     private String styleCSS;
 
     private int counter = 1;
-    private static SimpleIntegerProperty counterProperty;
+    private SimpleIntegerProperty counterProperty;
 
     public TempBox(String tempDir, String url, Pane pane, Executor executor) {
         this.styleCSS = "-fx-background-color: " + GenerateRandomColorRGB.generateColor() + ";";
-        counterProperty = new SimpleIntegerProperty(counter);
+        this.counterProperty = new SimpleIntegerProperty(counter);
         Label counterLabel = new Label();
 
-        counterLabel.textProperty().bind(counterProperty.asString());
+        counterLabel.textProperty().bind(this.counterProperty.asString());
         counterLabel.setStyle(
                 "-fx-background-color: rgba(256,256,256,0.60); \n"+
                         "-fx-font-size: 12pt; \n" +
