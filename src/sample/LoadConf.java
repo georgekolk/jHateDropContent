@@ -53,7 +53,6 @@ public class LoadConf {
             e.printStackTrace();
         }
 
-        //return destinationBoxes;
     }
 
 
@@ -65,6 +64,5 @@ public class LoadConf {
     public String getTempDir(){
         return this.tempDir;
     }
-
 
 }

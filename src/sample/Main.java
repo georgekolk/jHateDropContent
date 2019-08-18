@@ -42,9 +42,7 @@ public class Main extends Application {
 
         ArrayList<VBox> boxList = new ArrayList<VBox>();
         boxList.addAll(myBoxArrayList);
-
         FlowPane rootPane = new FlowPane();
-        //rootPane.setStyle("-fx-background-color: "+ GenerateRandomColorRGB.generateColor()+ ";");
         rootPane.setStyle("-fx-background-color: gray;");
 
         VBox createTempDir = new VBox();
@@ -64,12 +62,15 @@ public class Main extends Application {
             @Override
             public void handle(DragEvent event) {
 
-                Dragboard db = event.getDragboard();
-
-                if (db.hasUrl()){
-                    //System.out.println(db.getHtml());
-                    event.acceptTransferModes(TransferMode.COPY);
-                }  else {
+                if (event.getDragboard().hasHtml()) {
+                    event.acceptTransferModes(TransferMode.ANY);
+                    //System.out.println("event.getDragboard().hasUrl(): " + event.getDragboard().hasUrl() + event.getDragboard().getUrl() );
+                    event.consume();
+                }else if  (event.getDragboard().hasFiles()){
+                    event.acceptTransferModes(TransferMode.ANY);
+                    //System.out.println("event.getDragboard().hasFiles(): " + event.getDragboard().hasFiles() + event.getDragboard().getFiles());
+                    event.consume();
+                }else {
                     event.consume();
                 }
             }
@@ -78,13 +79,17 @@ public class Main extends Application {
         createTempDir.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                Dragboard db = event.getDragboard();
+                //Dragboard db = event.getDragboard();
                 boolean success = false;
 
-                if (db.hasUrl()) {
+                if (event.getDragboard().hasHtml()) {
                     success = true;
-                    System.out.println(db.getHtml());
-                    rootPane.getChildren().add(new TempBox(tempDir, db.getString(), rootPane, sequentialFirstLineExecutor));
+                    //System.out.println(event.getDragboard().getHtml());
+                    rootPane.getChildren().add(new TempBox(tempDir, event.getDragboard().getString(), rootPane, sequentialFirstLineExecutor));
+                }else if(event.getDragboard().hasFiles()) {
+                    success = true;
+                    //System.out.println(event.getDragboard().getFiles());
+                    rootPane.getChildren().add(new TempBox(tempDir, event.getDragboard().getFiles(), rootPane));
                 }
 
                 event.setDropCompleted(success);

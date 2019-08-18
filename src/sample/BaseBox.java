@@ -9,6 +9,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FileUtils;
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Executor;
 
 
@@ -39,24 +40,6 @@ public class BaseBox extends VBox {
             //System.out.print("Folder created");
         }
 
-        /*InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(new File("D:/2cs/unsorted/14033521_1373063572723279_1006711593_n.jpg"));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        Image image3 = new Image(inputStream);
-        ImageView imageView2 = new ImageView(image3);
-
-        imageView2.setFitWidth(150);
-        imageView2.setFitHeight(150);
-        imageView2.setPreserveRatio(true);
-
-        imageView2.setSmooth(true);
-        imageView2.setCache(true);
-
-        this.getChildren().add(imageView2);*/
 
         this.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
@@ -86,7 +69,7 @@ public class BaseBox extends VBox {
                 VBox tar = (VBox)event.getGestureTarget();
                 tar.setStyle("-fx-background-color: #555555;");
 
-                if (db.hasUrl()) {
+                if (db.hasHtml()) {
                     success = true;
                     System.out.println(db.getHtml());
 
@@ -117,8 +100,17 @@ public class BaseBox extends VBox {
                     }
 
                     //System.out.println("Drop da base" + db.getString());
-                }
 
+                }else if(db.hasFiles()){
+                    for (File fileFromDrag:db.getFiles()) {
+                        try {
+                            FileUtils.moveFileToDirectory(fileFromDrag, file, false);
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                    tar.setStyle(styleCSS);
+                }
 
 
                 event.setDropCompleted(success);
